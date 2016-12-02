@@ -32,6 +32,7 @@
 #include "industrial_robot_client/joint_trajectory_streamer.h"
 
 using industrial::simple_message::SimpleMessage;
+namespace SpecialSeqValues = industrial::joint_traj_pt::SpecialSeqValues;
 
 namespace industrial_robot_client
 {
@@ -120,6 +121,9 @@ bool JointTrajectoryStreamer::trajectory_to_msgs(const trajectory_msgs::JointTra
   // use base function to transform points
   if (!JointTrajectoryInterface::trajectory_to_msgs(traj, msgs))
     return false;
+
+  msgs->front().setSequence(SpecialSeqValues::START_TRAJECOTRY_STREAMING); //SpecialSeqValue START_TRAJECOTRY_STREAMING = -2
+  msgs->back().setSequence(SpecialSeqValues::END_TRAJECTORY); //SpecialSeqValue END_TRAJECTORY = -3
 
   // pad trajectory as required for minimum streaming buffer size
   if (!msgs->empty() && (msgs->size() < (size_t)min_buffer_size_))
